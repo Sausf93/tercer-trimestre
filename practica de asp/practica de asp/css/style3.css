@@ -1,0 +1,14 @@
+body{
+	background-color: #1362A5;
+}
+
+select{
+	position: relative;
+	left: 200px;
+	top: 100px;
+}
+div>.tabla{
+	position: relative;
+	top: 120px;
+	left: 200px;
+}

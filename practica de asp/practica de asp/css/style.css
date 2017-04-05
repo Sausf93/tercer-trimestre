@@ -1,0 +1,76 @@
+body{
+	background-color: #1362A5;
+}
+h1{
+	color:#0D0B32 ;
+	font-size: 60px;
+	position: absolute;
+	left: 200px;
+	font-family: 'letra'
+}
+
+#EnlaceCursos{
+	width: 160px;
+	height: 160px;
+	font-size: 30px;
+	position: absolute;
+	left: 120px;
+	top: 170px;
+	text-align: center;
+	text-decoration: none;
+	border:3px white;
+	border-style: solid;
+	color: #0D0B32;
+	font-family: 'letra'
+
+}
+#EnlaceCursos>p{
+	position: relative;
+	top: 20px;
+
+}
+#EnlaceAlumnos>p{
+	position: relative;
+	top: 20px;
+
+}
+#EnlaceNotas>p{
+	position: relative;
+	top: 20px;
+
+}
+#EnlaceAlumnos{
+	width: 160px;
+	height: 160px;
+	font-size: 30px;
+	position: absolute;
+	left: 340px;
+	top:170px;
+	text-align: center;
+	text-decoration: none;
+	border:3px white;
+	border-style: solid;
+	color: #0D0B32;
+	font-family: 'letra'
+}
+#EnlaceNotas{
+	width: 160px;
+	height: 160px;
+	text-align: center;
+	font-size: 30px;
+	position: absolute;
+	left: 560px;
+	top: 170px;
+	text-decoration: none;
+	border:3px white;
+	border-style: solid;
+	color: #0D0B32;
+	font-family: 'letra'
+}
+@font-face{
+	font-family: 'letra';
+	src:url(../letra/Congratulations_DEMO.ttf);
+}
+.cuadrado{
+	width: 50px;
+}
