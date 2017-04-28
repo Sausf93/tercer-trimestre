@@ -1,0 +1,144 @@
+﻿@using System.ServiceModel.Channels
+@using System.Web.UI.WebControls
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cursos</title>
+	<meta charset="utf-8">
+</head>
+<body>
+@{
+	var codcur = "";
+	var desc = "";
+	var horas = "";
+	var tutor = "";
+
+	if (!IsPost)
+	{
+
+		using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+		{
+			var cursos = (from c in tablas.CURSOS
+						  select c).First();
+
+			codcur = cursos.COD_CUR;
+			desc = cursos.DESCRIPCION;
+			horas = Convert.ToString(cursos.HORAS);
+			tutor = cursos.TUTOR;
+			Session["CODCUR"] = codcur;
+
+		}
+	}
+	else
+	{
+
+		var posi=Convert.ToInt32(Session["posi"]);
+
+
+		if (Request["Primero"]!=null)
+		{
+			posi = 0;
+			Session["posi"] = posi;
+		}
+		if (Request["Siguiente"] != null)
+		{
+			Session["error"] = posi;
+			posi = Convert.ToInt32(Session["posi"]);
+			posi++;
+			Session["posi"] = posi;
+		}
+		if (Request["anterior"] != null)
+		{
+			Session["error"] = posi;
+			posi = Convert.ToInt32(Session["posi"]);
+			posi--;
+			Session["posi"] = posi;
+		}
+		if (Request["ultimo"] != null)
+		{
+			Session["error"] = posi;
+			using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+			{
+				posi = tablas.CURSOS.Count() - 1;
+				Session["posi"] = posi;
+			}
+		}
+		if (Request["Modificar"]!=null)
+		{
+			Session["Opcion"] = "M";
+			Response.Redirect("webpage2.cshtml");
+		}
+		if (Request["Nuevo"]!=null)
+		{
+			Session["Opcion"] = "N";
+			Response.Redirect("webpage2.cshtml");
+		}
+		if (Request["Borrar"] != null)
+		{
+			Session["Opcion"] = "B";
+			Response.Redirect("webpage2.cshtml");
+		}
+		try
+		{
+			using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+			{
+				var cur = (from c in tablas.CURSOS
+						   orderby c.COD_CUR
+						   select c).Skip(posi).First();
+
+				codcur = cur.COD_CUR;
+				desc = cur.DESCRIPCION;
+				horas = Convert.ToString(cur.HORAS);
+				tutor = cur.TUTOR;
+			}
+		}
+		catch (Exception)
+		{
+			posi = Convert.ToInt32(Session["error"]);
+			Session["posi"] = posi;
+			using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+			{
+				var cur = (from c in tablas.CURSOS
+						   orderby c.COD_CUR
+						   select c).Skip(posi).First();
+
+				codcur = cur.COD_CUR;
+				desc = cur.DESCRIPCION;
+				horas = Convert.ToString(cur.HORAS);
+				tutor = cur.TUTOR;
+			}
+
+			Response.Write("Se ha llegado a el limite de registros de la tabla");
+		}
+	}
+
+}
+<h1>Cursos</h1>
+<br/>
+<form action="" method="post">
+	<label>Código Curso</label>
+	<input type="text" id="cod_cur" name="codcur" readonly value="@codcur"/>
+	<br/> <br/>
+	<label>Descripción</label>
+	<input type="text" id="descripcion" value="@desc"/>
+	<br/> <br/>
+	<label>Horas</label>
+	<input type="text" id="horas" value="@horas"/>
+	<br/><br/>
+	<label>Tutor</label>
+	<input type="text" id="tutor" value="@tutor"/>
+	<br/>
+	<input type="submit" value="</" name="Primero"/>
+	<input type="submit" value="<<" name="Anterior" />
+	<input type="submit" value=">>" name="Siguiente" />
+	<input type="submit" value="/>" name="Ultimo"/>
+	<br/>
+	<input type="submit" value="Modificar" name="Modificar"/>
+	<input type="submit" value="Nuevo" name="Nuevo"/>
+	<input type="submit" value="Borrar" name="Borrar"/>
+
+
+
+</form>
+</body>
+</html>

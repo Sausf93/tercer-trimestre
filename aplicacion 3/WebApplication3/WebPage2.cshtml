@@ -1,0 +1,122 @@
+﻿@using System.ComponentModel.DataAnnotations.Schema
+@using System.Runtime.ExceptionServices
+@using System.ServiceModel.Configuration
+@using WebApplication3
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Modifica Cursos</title>
+</head>
+<body>
+	@{
+		var Codcur = "";
+		var Desc = "";
+		var Horas = "";
+		var Tutor = "";
+		var isreadonly = "";
+
+		if (!IsPost)
+		{
+			isreadonly = "readonly";
+			if (Session["Opcion"] != "N")
+			{
+				Codcur = Session["CODCUR"].ToString();
+
+				using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+				{
+					var nuevo = (from c in tablas.CURSOS
+								 where c.COD_CUR == Codcur
+								 select c).First();
+
+
+					Desc = nuevo.DESCRIPCION;
+					Horas = nuevo.HORAS.ToString();
+					Tutor = nuevo.TUTOR;
+				}
+			}
+			else
+			{
+				isreadonly = "";
+
+			}
+		}
+
+	}
+	<h1>Cursos</h1>
+	<br />
+	<form action="" method="post">
+		<label>Código Curso</label>
+		<input type="text" id="cod_cur" name="codcur" @isreadonly  value="@Codcur" />
+		<br /> <br />
+		<label>Descripción</label>
+		<input type="text" id="descripcion" value="@Desc" name="des" />
+		<br /> <br />
+		<label>Horas</label>
+		<input type="text" id="horas" value="@Horas" name="hor" />
+		<br /><br />
+		<label>Tutor</label>
+		<input type="text" id="tutor" value="@Tutor" name="tut" />
+		<br />
+		<br />
+		<input type="submit" name="aceptar" value="Aceptar" />
+		<input type="submit" name="cancelar" value="Cancelar" />
+		@{
+			if (Request["aceptar"] != null || Request["cancelar"] != null)
+			{
+				if (Session["Opcion"] == "M" && Request["Aceptar"] != null)
+				{
+					using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+					{
+						foreach (CURSOS cur in tablas.CURSOS)
+						{
+							if (Session["CODCUR"].ToString() == cur.COD_CUR)
+							{
+								cur.COD_CUR = Request["codcur"];
+								cur.DESCRIPCION = Request["des"];
+								cur.HORAS = Convert.ToInt32(Request["Hor"]);
+								cur.TUTOR = Request["Tut"];
+							}
+						}
+						tablas.SaveChanges();
+					}
+				}
+				if (Session["Opcion"] == "B" && Request["Aceptar"] != null)
+				{
+					using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+					{
+
+						foreach (CURSOS c in tablas.CURSOS)
+						{
+							if (c.COD_CUR==Request["codcur"])
+							{
+								tablas.CURSOS.Remove(c);
+
+							}
+						}
+						tablas.SaveChanges();
+
+					}
+				}
+				if (Session["Opcion"] == "N" && Request["Aceptar"] != null)
+				{
+					using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+					{
+						CURSOS cur =new CURSOS();
+						cur.COD_CUR = Request["codcur"];
+						cur.DESCRIPCION = Request["des"];
+						cur.HORAS = Convert.ToInt32(Request["hor"]);
+						cur.TUTOR = Request["tut"];
+						tablas.CURSOS.Add(cur);
+						tablas.SaveChanges();
+					}
+					Response.Redirect("WebPage1.cshtml");
+				}
+				else
+				{
+					Response.Redirect("WebPage1.cshtml");
+				}
+			}
+		}
+	</form>
+</body>
+</html>

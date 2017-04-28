@@ -1,0 +1,193 @@
+﻿@using System.Data.Entity.Core.Common.CommandTrees
+@using WebApplication3
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Alumnos</title>
+	<meta charset="utf-8" />
+</head>
+<body>
+	
+		@{
+			var codcur = "";
+			var alu = "";
+			var nom = "";
+			var ape = "";
+			var dni = "";
+			var tomar = 0;
+			var salta = 5;
+			var aux = "";
+
+			if (Request["Modificar"] != null)
+			{
+				Session["opcion"] = "M";
+				aux = Request["Modificar"];
+				Session["codalu"] = aux;
+				Response.Redirect("Nuevo y modifica alumno.cshtml");
+			}
+			if (Request["Nuevo"] != null)
+			{
+				Session["opcion"] = "N";
+				Response.Redirect("Nuevo y modifica alumno.cshtml");
+
+			}
+			if (Request["Borrar"] != null)
+			{
+				Session["opcion"] = "B";
+				Session["codalu"] = Request["Borrar"].ToString();
+				Response.Redirect("Nuevo y modifica alumno.cshtml");
+			}
+		}
+
+
+<h1>Alumnos</h1>
+	<form action="" method="post">
+		<table>
+			<tr>
+				<td>Curso</td>
+				<td>Alumno</td>
+				<td>Nombre</td>
+				<td>Apellidos</td>
+				<td>DNI</td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			@{
+				if (!IsPost)
+				{
+					using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+					{
+						var cursos = (from c in tablas.ALUMNOS
+									  orderby c.COD_CUR
+									  select c).Take(5).ToList();
+						for (int i = 0; i < tablas.CURSOS.Count() - 1; i++)
+						{
+
+
+							codcur = cursos[i].COD_CUR;
+							alu = cursos[i].COD_ALU;
+							nom = cursos[i].NOMBRE;
+							ape = cursos[i].APELLIDOS;
+							dni = cursos[i].DNI;
+							Session["CODALU"] = alu;
+							<tr>
+								<td>@codcur</td>
+								<td>@alu</td>
+								<td>@nom</td>
+								<td>@ape</td>
+								<td>@dni</td>
+								<td><button value="@alu" name="Modificar" id="Modificar" type="submit">Modificar</button></td>
+								<td><button value="@alu" name="Borrar" type="submit">Borrar</button></td>
+							</tr>
+						}
+					}
+				}
+				if (Request["Siguiente"] != null)
+				{
+
+
+					try
+					{
+						using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+						{
+							tomar = 5;
+							salta = Convert.ToInt32(Session["salta"]);
+							salta += 5;
+							var cursos = (from c in tablas.ALUMNOS
+										  orderby c.COD_CUR
+										  select c).Skip(salta).Take(tomar).ToList();
+							for (int i = 0; i < tomar; i++)
+							{
+								codcur = cursos[i].COD_CUR;
+								alu = cursos[i].COD_ALU;
+								nom = cursos[i].NOMBRE;
+								ape = cursos[i].APELLIDOS;
+								dni = cursos[i].DNI;
+
+
+
+								<tr>
+									<td>@codcur</td>
+									<td>@alu</td>
+									<td>@nom</td>
+									<td>@ape</td>
+									<td>@dni</td>
+									<td><button value="@alu" name="Modificar" id="Modificar" type="submit">Modificar</button></td>
+									<td><button value="@alu" name="Borrar" type="submit">Borrar</button></td>
+								</tr>
+							}
+							Session["salta"] = salta;
+						}
+
+
+
+					}
+					catch (Exception)
+					{
+						tomar--;
+						salta -= 5;
+						Session["salta"] = salta;
+
+					}
+
+				}
+
+				if (Request["Anterior"] != null)
+				{
+
+					salta = Convert.ToInt32(Session["salta"]);
+
+
+
+
+					using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+					{
+						try
+						{
+							var cursos = (from c in tablas.ALUMNOS
+										  orderby c.COD_CUR
+										  select c).Skip(salta).Take(5).ToList();
+							for (int i = 0; i < 5; i++)
+							{
+								codcur = cursos[i].COD_CUR;
+								alu = cursos[i].COD_ALU;
+								nom = cursos[i].NOMBRE;
+								ape = cursos[i].APELLIDOS;
+								dni = cursos[i].DNI;
+								Session["CODALU"] = alu;
+
+								<tr>
+									<td>@codcur</td>
+									<td>@alu</td>
+									<td>@nom</td>
+									<td>@ape</td>
+									<td>@dni</td>
+									<td><button value="@alu" name="Modificar" id="Modificar" type="submit">Modificar</button></td>
+									<td><button value="@alu" name="Borrar" type="submit">Borrar</button></td>
+								</tr>
+							}
+
+							Session["salta"] = salta;
+						}
+						catch (Exception)
+						{
+
+						}
+
+					}
+
+				}
+
+			}
+
+
+		</table>
+
+		<input type="submit" name="Anterior" value="Anterior" />
+		<input type="submit" name="Siguiente" value="Siguiente" />
+		<input type="submit" name="Nuevo" value="Nuevo" />
+	</form>
+
+</body>
+</html>

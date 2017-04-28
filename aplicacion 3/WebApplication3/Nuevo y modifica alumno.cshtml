@@ -1,0 +1,124 @@
+﻿@using WebApplication3
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+@{
+	var codcur = "";
+	var alu = "";
+	var nom = "";
+	var ape = "";
+	var dni = "";
+	var isreadonly = "";
+	var aux = "";
+	if (!IsPost)
+	{
+		isreadonly = "readonly";
+		if (Session["opcion"] != "N")
+		{
+			alu = Session["codalu"].ToString();
+
+			using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+			{
+				var nuevo = (from c in tablas.ALUMNOS
+							 where c.COD_ALU == alu
+							 select c).First();
+
+
+				codcur = nuevo.COD_CUR;
+				nom = nuevo.NOMBRE;
+				ape = nuevo.APELLIDOS;
+				dni = nuevo.DNI;
+			}
+		}
+		else
+		{
+			isreadonly = "";
+
+		}
+	}
+}
+<form action="" method="post">
+	<label>Curso</label>
+	<input type="text" id="cod_cur" name="codcur" readonly value="@codcur"/>
+	<br/> <br/>
+	<label>Alumno</label>
+	<input type="text" id="alu" value="@alu"/>
+	<br/> <br/>
+	<label>Nombre</label>
+	<input type="text" id="nom" value="@nom"/>
+	<br/><br/>
+	<label>Apellidos</label>
+	<input type="text" id="ape" value="@ape"/>
+	<br/>
+	<br />
+	<label>DNI</label>
+	<input type="text" id="dni" value="@dni" />
+	<br />
+	<input type="submit" name="aceptar" value="Aceptar" />
+	<input type="submit" name="cancelar" value="Cancelar" />
+	@{
+		if (Request["aceptar"] != null || Request["cancelar"] != null)
+		{
+			if (Session["opcion"] == "M" && Request["Aceptar"] != null)
+			{
+				using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+				{
+					foreach (ALUMNOS alus in tablas.ALUMNOS)
+					{
+						if (Session["codalu"].ToString() == alus.COD_ALU)
+						{
+							alus.COD_CUR = Request["codcur"];
+							alus.NOMBRE = Request["nom"];
+							alus.APELLIDOS = Request["ape"];
+							alus.DNI = Request["dni"];
+						}
+					}
+					tablas.SaveChanges();
+				}
+			}
+			if (Session["Opcion"] == "B" && Request["Aceptar"] != null)
+			{
+				using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+				{
+					aux = Session["codalu"].ToString();
+					foreach (ALUMNOS a in tablas.ALUMNOS)
+					{
+
+						if (a.COD_ALU == (string)Session["codalu"])
+						{
+							tablas.ALUMNOS.Remove(a);
+
+						}
+					}
+					tablas.SaveChanges();
+
+				}
+			}
+			if (Session["Opcion"] == "N" && Request["Aceptar"] != null)
+			{
+				using (WebApplication3.Model1 tablas = new WebApplication3.Model1())
+				{
+					ALUMNOS newalu = new ALUMNOS();
+					newalu.COD_CUR = Request["codcur"];
+					newalu.COD_ALU = Request["alu"];
+					newalu.NOMBRE = Request["nom"];
+					newalu.APELLIDOS = Request["ape"];
+					newalu.DNI = Request["dni"];
+					tablas.ALUMNOS.Add(newalu);
+					tablas.SaveChanges();
+				}
+				Response.Redirect("Alumnos.cshtml");
+			}
+			else
+			{
+				Response.Redirect("Alumnos.cshtml");
+			}
+		}
+	}
+</form>
+
+</body>
+</html>
